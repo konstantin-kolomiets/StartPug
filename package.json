@@ -1,12 +1,12 @@
 {
-  "name": "optimizedhtml",
-  "version": "4.0.0",
-  "description": "ArtMarks - Start HTML Template",
+  "name": "optimizedpug",
+  "version": "1.0.0",
+  "description": "Konstantin-Kolomiets - Start Pug Template",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "ArtMarks",
+  "author": "Konstantin-Kolomiets",
   "license": "ISC",
   "devDependencies": {
     "browser-sync": "^2.26.3",
