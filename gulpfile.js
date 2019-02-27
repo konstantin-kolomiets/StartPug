@@ -1,5 +1,4 @@
 var syntax        = 'sass', // Syntax: sass or scss;
-	gulpversion   = '4'; // Gulp version: 3 or 4
 
 var gulp          = require('gulp'),
 		babel 				= require("gulp-babel"),
@@ -49,17 +48,23 @@ gulp.task('styles', function() {
 	.pipe(browserSync.stream())
 });
 
-gulp.task('scripts', function() {
+gulp.task('babel', function(){
+	return gulp.src('app/dev/assets/js/common.js')
+	.pipe(babel({ presets: ['@babel/env'] }))
+	.pipe(concat('app/dev/assets/js/common_dist.js'))
+	.pipe(gulp.dest('./'))
+});
+
+gulp.task('scripts', gulp.series('babel', function() {
 	return gulp.src([
 		'app/dev/assets/libs/jquery/dist/jquery.min.js',
-		'app/dev/assets/js/common.js', // Always at the end
+		'app/dev/assets/js/common_dist.js', // Always at the end
 		])
-	.pipe(babel({ presets: ['@babel/env'] }))
 	.pipe(concat('scripts.min.js'))
 	// .pipe(uglify()) // Mifify js (opt.)
 	.pipe(gulp.dest('app/build/assets/js'))
 	.pipe(browserSync.reload({ stream: true }))
-});
+}));
 
 gulp.task('code', function() {
 	// return gulp.src('app/*.html')
@@ -82,22 +87,10 @@ gulp.task('rsync', function() {
 	}))
 });
 
-if (gulpversion == 3) {
-	gulp.task('watch', ['pug', 'styles', 'scripts', 'browser-sync'], function() {
-		gulp.watch('app/dev/assets/'+syntax+'/**/*.'+syntax+'', ['styles']);
-		gulp.watch(['app/dev/assets/libs/**/*.js', 'app/dev/assets/js/common.js'], ['scripts']);
-		// gulp.watch('app/*.html', ['code'])
-		gulp.watch('app/dev/**/*.pug', ['pug'])
-	});
-	gulp.task('default', ['watch']);
-}
-
-if (gulpversion == 4) {
-	gulp.task('watch', function() {
-		gulp.watch('app/dev/assets/'+syntax+'/**/*.'+syntax+'', gulp.parallel('styles'));
-		gulp.watch(['app/dev/assets/libs/**/*.js', 'app/dev/assets/js/common.js'], gulp.parallel('scripts'));
-		// gulp.watch('app/*.html', gulp.parallel('code'))
-		gulp.watch('app/dev/**/*.pug', gulp.parallel('pug'))
-	});
-	gulp.task('default', gulp.parallel('pug', 'styles', 'scripts', 'browser-sync', 'watch'));
-}
+gulp.task('watch', function() {
+	gulp.watch('app/dev/assets/'+syntax+'/**/*.'+syntax+'', gulp.parallel('styles'));
+	gulp.watch(['app/dev/assets/libs/**/*.js', 'app/dev/assets/js/common.js'], gulp.parallel('scripts'));
+	// gulp.watch('app/*.html', gulp.parallel('code'))
+	gulp.watch('app/dev/**/*.pug', gulp.parallel('pug'))
+});
+gulp.task('default', gulp.parallel('pug', 'styles', 'scripts', 'browser-sync', 'watch'));
