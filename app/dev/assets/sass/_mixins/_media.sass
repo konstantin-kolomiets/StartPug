@@ -1,0 +1,8 @@
+@mixin +media-breakpoint-down($bp)
+  @media screen and (max-width: $bp) 
+      @content
+
+@mixin +media-breakpoint-up($bp)
+  @media screen and (min-width: $bp) 
+      @content
+  
